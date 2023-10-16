@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewChildren } from '@angular/core';
 import { Candidate } from './models/candidate.model';
+import { CandidateComponent } from './components/candidate/candidate.component';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,9 @@ import { Candidate } from './models/candidate.model';
 })
 export class AppComponent {
   title = 'candidates-frontend';
+
+  @ViewChildren(CandidateComponent)
+  private candidateComps!: CandidateComponent[];
 
   candidates: Candidate[] = [
     {
@@ -67,5 +71,12 @@ export class AppComponent {
 
   selectCandidate(candidate: Candidate) {
     this.selectedCandidate = candidate;
+  }
+
+  getCandidatesLength() {
+    // this.candidateComps es de tipo QueryList
+    return !!this.candidateComps && 'length' in this.candidateComps
+      ? this.candidateComps.length
+      : 0;
   }
 }

@@ -9,7 +9,14 @@
       [value]="candidateName"
     />
   </div>
+  <button (click)="list.toggleDirection()">Cambiar lista</button>
   <div>
+    <h3>
+      Número de candidatos <span>{{ getCandidatesLength() }}</span>
+    </h3>
+  </div>
+  <app-candidate-list #list>
+    <h2 title>Lista de candidatos</h2>
     <app-candidate
       [candidate]="candidates[0]"
       (select)="selectCandidate($event)"
@@ -21,6 +28,6 @@
     <app-candidate
       [candidate]="candidates[2]"
       (select)="selectCandidate($event)"
-    ></app-candidate>
-  </div>
+    ></app-candidate
+  ></app-candidate-list>
 </div>
