@@ -31,12 +31,49 @@ export class CandidateComponent
     AfterViewChecked,
     OnDestroy
 {
-  @Input() candidate!: Candidate;
+  @Input()
+  set candidate(candidate: Candidate) {
+    this._candidate = candidate;
+    const index = candidate.name.indexOf(' ');
+    if (index < 0) {
+      throw new Error('The name does not contain a space');
+    }
+    this.name = candidate.name.slice(0, index + 1);
+    this.surname = candidate.name.slice(index) + 1;
+    this.cssClasses = {
+      animate: false,
+      'candidate-card': true,
+      senior: candidate.experience < 3,
+      junior: candidate.experience > 5,
+    };
+    this.colorStyle = candidate.experience <= 5 ? 'black' : 'white';
+  }
+  get candidate() {
+    return this._candidate;
+  }
 
   @Output() select = new EventEmitter<Candidate>();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes', changes);
+  public name: string = '';
+  public surname: string = '';
+  public cssClasses: any = {};
+  public colorStyle: string = '';
+  private _candidate!: Candidate;
+
+  ngOnChanges(changes: SimpleChanges) {
+    let log: string = '';
+    for (const propName in changes) {
+      const changedProp = changes[propName];
+      console.log({ changedProp });
+      const to = JSON.stringify(changedProp.currentValue);
+      if (changedProp.isFirstChange()) {
+        log = `Initial value of ${propName} set to ${to}`;
+      } else {
+        const from = JSON.stringify(changedProp.previousValue);
+        log = `${propName} changed from ${from} to ${to}`;
+      }
+    }
+    console.log('OnChanges', log);
   }
   ngOnInit(): void {
     console.log('OnInit', { candidate: this.candidate });
@@ -59,20 +96,9 @@ export class CandidateComponent
 
   doEdit = () => {
     this.select.emit(this.candidate);
+    this.cssClasses.animate = true;
+    setTimeout(() => {
+      this.cssClasses.animate = false;
+    }, 750);
   };
-
-  candidateClasses() {
-    return {
-      'candidate-card': true,
-      senior: this.candidate.experience < 3,
-      junior: this.candidate.experience > 5,
-    };
-  }
-
-  getColor() {
-    if (this.candidate.experience <= 5) {
-      return 'black';
-    }
-    return 'white';
-  }
 }
